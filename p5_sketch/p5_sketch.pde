@@ -3,8 +3,6 @@
 
 // for further information see --> https://github.com/tomekness/p5_midi-OSC_bridge_magicQ
 
-// example  by tomek_n | 2022
-
 /** 
  * An Simple example on how to bridge an Midi-Input to an OSC-Output
  *
@@ -13,6 +11,8 @@
  * outputting OSC to MagicQ (ChamSys) --> https://chamsyslighting.com/products/magicq
  * (you need to be out of demo-mode to be able to use osc at MagicQ)
  * 
+ * tested on Processing 3.3.7 
+ *
  *
  * p5 library requirments
  * ------------------------
@@ -25,21 +25,27 @@
  *
  */
 
+// example  by tomek_n | 2022 -- based on examples by oscP5 and theMidiBus
+
+//Import the libraries
+
 import oscP5.*;
 import netP5.*;
-import themidibus.*; //Import the library
+import themidibus.*; 
 
 OscP5 oscP5;
-NetAddress myRemoteLocation;
+NetAddress myRemoteLocation;  // who to talk to 
 
-MidiBus myBus; // The MidiBus
+MidiBus myBus;
 
-boolean debug = true;
+boolean debug = true; // in debug mode we print some informations to the terminal
 
-int[] noteNums = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+//////// buttons on my midi controller 
+int[] button_midiNote = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-String[] noteIds = {
-  "/pb/1/flash", 
+//////// what the buttons should do in MagicQ
+String[] button_OSCcomand = {
+  "/pb/1/flash", // flash button at fader 1 
   "/pb/2/flash", 
   "/pb/3/flash", 
   "/pb/4/flash", 
@@ -48,12 +54,10 @@ String[] noteIds = {
   "/pb/7/flash", 
   "/pb/8/flash", 
   "", 
-  "/rpc/09H"
+  "/rpc/09H"  // clear 
 };
 
-int [] noteBolNums = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29};
-
-boolean [] noteBolState = {false, false, false, false, false, false, false, false, false, false};
+////// fader at my midi controller 
 
 int[] ccNums = {0, 1, 2, 3, 4, 5, 6, 7};
 
@@ -67,6 +71,12 @@ String[] ccIds = {
   "/pb/7", 
   "/pb/8"
 };
+
+
+int [] noteBolNums = {20, 21, 22, 23, 24, 25, 26, 27, 28, 29};
+
+boolean [] noteBolState = {false, false, false, false, false, false, false, false, false, false};
+
 
 int[] ccAtributeNums = {10, 11, 12, 13, 14, 15, 16, 17};
 
@@ -121,8 +131,9 @@ void setup() {
 void draw() {
 }
 
+// Receive a noteOn
 void noteOn(int channel, int pitch, int velocity) {
-  // Receive a noteOn
+  // send an OSC command   
   NoteOnSendToMagicQ(channel, pitch, 127);
   if (debug) {
     print("Note On:");
@@ -161,13 +172,20 @@ void controllerChange(int channel, int number, int value) {
 
 
 void NoteOnSendToMagicQ( int _c, int _n, int _v) {
-  /* in the following different ways of creating osc messages are shown by example */
+  
+  // we are using buttons in two different ways, 
+  //note 1–10 is just a button (e.g. flash-button)
+  // note 20–30 is an internal boolean 
+  //we are using the change the functionality of an potti on our midi controller  
   if (_n>=0 && _n<10) {
-    for (int e=0; e<noteNums.length; e++ ) {
-      if (_n == noteNums[e]) {
-        OscMessage myMessage = new OscMessage(noteIds[e]);
-        myMessage.add(int(_v/1.27)); /* add an int to the osc message */
-        /* send the message */
+    for (int e=0; e<button_midiNote.length; e++ ) {
+      if (_n == button_midiNote[e]) {
+        OscMessage myMessage = new OscMessage(button_OSCcomand[e]);
+        // add an value to the osc message 
+        // midi command is between 0-127 
+        // magicQ wants an int between 0-100
+        myMessage.add(int(_v/1.27)); 
+        // send the message 
         oscP5.send(myMessage, myRemoteLocation); 
         if (debug)println("send");
       }
@@ -193,8 +211,11 @@ void CCSendToMagicQ( int _c, int _n, int _v) {
     for (int e=0; e<ccNums.length; e++ ) {
       if (_n == ccNums[e]) {
         OscMessage myMessage = new OscMessage(ccIds[e]);
-        myMessage.add(int(_v/1.27)); /* add an int to the osc message */
-        /* send the message */
+         // add an value to the osc message 
+        // midi command is between 0-127 
+        // magicQ wants an int between 0-100
+        myMessage.add(int(_v/1.27)); 
+        // send the message 
         oscP5.send(myMessage, myRemoteLocation); 
         if (debug)println("send");
       }
@@ -214,15 +235,17 @@ void CCSendToMagicQ( int _c, int _n, int _v) {
           msg += ",100,1H";
         }
         OscMessage myMessage = new OscMessage(msg);
-        myMessage.add(int(_v/1.27)); /* add an int to the osc message */
-        /* send the message */
+         // add an value to the osc message 
+        // midi command is between 0-127 
+        // magicQ wants an int between 0-100
+        myMessage.add(int(_v/1.27)); 
+        // send the message 
         oscP5.send(myMessage, myRemoteLocation); 
         if (debug)println("send");
       }
     }
   }
 }
-
 
 
 void delay(int time) {
