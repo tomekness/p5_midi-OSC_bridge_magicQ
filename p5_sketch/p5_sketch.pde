@@ -1,7 +1,28 @@
-/**
- * input from Midi (Behringer BCF2000) 
- * outputting to MagicQ
- * using oscP5 by andreas schlegel and theMidiBus
+
+// 
+
+// for further information see --> https://github.com/tomekness/p5_midi-OSC_bridge_magicQ
+
+// example  by tomek_n | 2022
+
+/** 
+ * An Simple example on how to bridge an Midi-Input to an OSC-Output
+ *
+ * Midi-input in this example coming from an Behringer BCF2000 
+ * 
+ * outputting OSC to MagicQ (ChamSys) --> https://chamsyslighting.com/products/magicq
+ * (you need to be out of demo-mode to be able to use osc at MagicQ)
+ * 
+ *
+ * p5 library requirments
+ * ------------------------
+ * oscP5 by andreas schlegel --> https://www.sojamo.de/libraries/oscP5/ 
+ * and theMidiButhems --> https://github.com/sparks/themidibus
+ *
+ * tool tip
+ * -----------
+ * OSC and MIDI - Controll and Test Utility --> https://hexler.net/protokol 
+ *
  */
 
 import oscP5.*;
