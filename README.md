@@ -4,7 +4,7 @@
 - An Simple example on how to bridge an Midi-Input to an OSC-Output
 - Midi-input in this example coming from an Behringer BCF2000
 - outputting OSC to MagicQ (ChamSys) --> https://chamsyslighting.com/products/magicq
-  (you need to be out of demo-mode to be able to use osc at MagicQ)
+  (! you need to be out of demo-mode to be able to use osc in MagicQ! )
 
 
 ChamSys MagicQ --> https://chamsyslighting.com/products/magicq
